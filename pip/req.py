@@ -615,12 +615,16 @@ exec(compile(open(__file__).read().replace('\\r\\n', '\\n'), __file__, 'exec'))
         name = name.replace(os.path.sep, '/')
         return name
 
-    def install(self, install_options, global_options=(), root=None):
+    def install(self, install_options, global_options=(), root=None, strip_file_prefix=None):
         if self.editable:
             self.install_editable(install_options, global_options)
             return
         if self.is_wheel:
-            self.move_wheel_files(self.source_dir, root=root)
+            self.move_wheel_files(
+                self.source_dir,
+                root=root,
+                strip_file_prefix=strip_file_prefix
+            )
             self.install_succeeded = True
             return
 
@@ -844,13 +848,14 @@ exec(compile(open(__file__).read().replace('\\r\\n', '\\n'), __file__, 'exec'))
         self._bundle_build_dirs = bundle_build_dirs
         self._bundle_editable_dirs = bundle_editable_dirs
 
-    def move_wheel_files(self, wheeldir, root=None):
+    def move_wheel_files(self, wheeldir, root=None, strip_file_prefix=None):
         move_wheel_files(
             self.name, self.req, wheeldir,
             user=self.use_user_site,
             home=self.target_dir,
             root=root,
             pycompile=self.pycompile,
+            strip_file_prefix=strip_file_prefix,
         )
 
     @property

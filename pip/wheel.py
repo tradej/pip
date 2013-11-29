@@ -136,7 +136,7 @@ def get_entrypoints(filename):
 
 
 def move_wheel_files(name, req, wheeldir, user=False, home=None, root=None,
-        pycompile=True):
+        pycompile=True, strip_file_prefix=None):
     """Install a wheel"""
 
     scheme = distutils_scheme(name, user=user, home=home, root=root)
@@ -357,6 +357,8 @@ if __name__ == '__main__':
                 writer.writerow(row)
             for f in generated:
                 h, l = rehash(f)
+                if strip_file_prefix and f.startswith(strip_file_prefix):
+                    f = os.path.join(os.sep, os.path.relpath(f, strip_file_prefix))
                 writer.writerow((f, h, l))
             for f in installed:
                 writer.writerow((installed[f], '', ''))

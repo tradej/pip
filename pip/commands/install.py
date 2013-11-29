@@ -137,6 +137,14 @@ class InstallCommand(Command):
             help="Install everything relative to this alternate root directory.")
 
         cmd_opts.add_option(
+            '--strip-file-prefix',
+            dest='strip_file_prefix',
+            metavar='prefix',
+            default=None,
+            help="Strip given prefix from script paths in wheel RECORD."
+        )
+
+        cmd_opts.add_option(
             "--compile",
             action="store_true",
             dest="compile",
@@ -273,7 +281,11 @@ class InstallCommand(Command):
                 requirement_set.locate_files()
 
             if not options.no_install and not self.bundle:
-                requirement_set.install(install_options, global_options, root=options.root_path)
+                requirement_set.install(
+                    install_options,
+                    global_options,
+                    root=options.root_path,
+                    strip_file_prefix=options.strip_file_prefix)
                 installed = ' '.join([req.name for req in
                                       requirement_set.successfully_installed])
                 if installed:
