@@ -892,7 +892,7 @@ class RequirementSet(object):
     def __init__(self, build_dir, src_dir, download_dir, download_cache=None,
                  upgrade=False, ignore_installed=False, as_egg=False, target_dir=None,
                  ignore_dependencies=False, force_reinstall=False, use_user_site=False,
-                 session=None, pycompile=True):
+                 session=None, pycompile=True, use_root=None):
         self.build_dir = build_dir
         self.src_dir = src_dir
         self.download_dir = download_dir
@@ -913,6 +913,7 @@ class RequirementSet(object):
         self.target_dir = target_dir #set from --target option
         self.session = session or PipSession()
         self.pycompile = pycompile
+        self.use_root = use_root
 
     def __str__(self):
         reqs = [req for req in self.requirements.values()
@@ -1187,7 +1188,8 @@ class RequirementSet(object):
                         if req_to_install.satisfied_by:
                             if self.upgrade or self.ignore_installed:
                                 #don't uninstall conflict if user install and and conflict is not user install
-                                if not (self.use_user_site and not dist_in_usersite(req_to_install.satisfied_by)):
+                                if not (self.use_user_site and not dist_in_usersite(req_to_install.satisfied_by)) \
+                                        and not self.use_root:
                                     req_to_install.conflicts_with = req_to_install.satisfied_by
                                 req_to_install.satisfied_by = None
                             else:

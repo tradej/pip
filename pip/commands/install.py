@@ -243,6 +243,7 @@ class InstallCommand(Command):
             target_dir=temp_target_dir,
             session=session,
             pycompile=options.compile,
+            use_root=options.root_path,
         )
         for name in args:
             requirement_set.add_requirement(
